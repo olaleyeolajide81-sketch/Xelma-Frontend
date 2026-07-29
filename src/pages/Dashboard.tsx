@@ -50,6 +50,16 @@ const Dashboard = () => {
     setIsBetModalOpen(true);
   };
 
+  const openPredictBar = () => {
+    // Open BetModal with default prediction data when triggered from sticky bar
+    setPendingPrediction({
+      direction: 'UP',
+      stake: '',
+      isLegend: false,
+    });
+    setIsBetModalOpen(true);
+  };
+
   const getEndRoundResult = (round: Round | null) => {
     const defaultTip = 'Stay tuned for the next round.';
 
@@ -85,7 +95,7 @@ const Dashboard = () => {
   const endRoundResult = getEndRoundResult(resolvedRound);
 
   return (
-    <div className="xelma-grid-bg min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+    <div className="xelma-grid-bg min-h-screen px-4 py-8 sm:px-6 lg:px-8 pb-24 md:pb-8">
       <div className="mx-auto max-w-7xl">
         {isLoading && <DashboardSkeleton />}
 
@@ -142,6 +152,32 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Mobile sticky predict action bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+        <div className="flex items-center justify-between gap-3 border-t border-gray-800 bg-gray-900/95 backdrop-blur-lg px-4 py-3 shadow-2xl"
+             style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs font-semibold text-gray-400">
+              {isRoundActive && isWalletConnected ? "Active Round" : !isWalletConnected ? "Wallet Required" : "No Active Round"}
+            </span>
+            <span className="text-sm font-bold text-white">
+              {isRoundActive && isWalletConnected ? "Place your prediction now" : !isWalletConnected ? "Connect to predict" : "Check back soon"}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={openPredictBar}
+            disabled={!isRoundActive || !isWalletConnected}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2C4BFD] to-[#4B6AFF] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#2C4BFD]/30 transition-all duration-200 hover:from-[#3B5BFD] hover:to-[#5B7AFF] hover:shadow-xl hover:shadow-[#2C4BFD]/40 active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-lg disabled:hover:from-[#2C4BFD] disabled:hover:to-[#4B6AFF]"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1L10.5 5.5L15.5 6.5L12 10L13 15L8 12.5L3 15L4 10L0.5 6.5L5.5 5.5L8 1Z" fill="currentColor" />
+            </svg>
+            Predict Now
+          </button>
+        </div>
       </div>
 
       <BetModal
